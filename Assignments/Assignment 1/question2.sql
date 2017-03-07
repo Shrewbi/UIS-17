@@ -20,9 +20,13 @@ CREATE TABLE courses(
 
 CREATE TABLE registration(
   student_id CHAR(6) REFERENCES students(kuid),
-  course_id     INT REFERENCES courses(id),
-  evaluation    INT,
+  course_id  INT REFERENCES kurser(id),
+  year       INT,
+  block      INT,
+  semester   BOOLEAN,
+  evaluation INT,
   grade      INT,
+  FOREIGN KEY (course_id, year, block, semester) REFERENCES offered(course_id, year, block, semester),
   PRIMARY KEY (student_id, course_id)
  );
 
@@ -38,7 +42,7 @@ CREATE TABLE offered(
   year      INT,
   block     INT,
   semester  BOOLEAN,
-  FOREIGN KEY (year, block, semester) REFERENCES periode(year, block, semester),
+  FOREIGN KEY (year, block, semester) REFERENCES period(year, block, semester),
   PRIMARY KEY (course_id, year, block, semester)
 );
 
