@@ -18,18 +18,6 @@ CREATE TABLE courses(
   PRIMARY KEY (id)
 );
 
-CREATE TABLE registration(
-  student_id CHAR(6) REFERENCES students(kuid),
-  course_id  INT REFERENCES kurser(id),
-  year       INT,
-  block      INT,
-  semester   BOOLEAN,
-  evaluation INT,
-  grade      INT,
-  FOREIGN KEY (course_id, year, block, semester) REFERENCES offered(course_id, year, block, semester),
-  PRIMARY KEY (student_id, course_id)
- );
-
 CREATE TABLE period(
   year     INT,
   block    INT,
@@ -45,6 +33,18 @@ CREATE TABLE offered(
   FOREIGN KEY (year, block, semester) REFERENCES period(year, block, semester),
   PRIMARY KEY (course_id, year, block, semester)
 );
+
+CREATE TABLE registration(
+  student_id CHAR(6) REFERENCES students(kuid),
+  course_id  INT REFERENCES courses(id),
+  year       INT,
+  block      INT,
+  semester   BOOLEAN,
+  evaluation INT,
+  grade      INT,
+  FOREIGN KEY (course_id, year, block, semester) REFERENCES offered(course_id, year, block, semester),
+  PRIMARY KEY (student_id, course_id)
+ );
 
 CREATE TABLE lecturers(
   email VARCHAR(100),
