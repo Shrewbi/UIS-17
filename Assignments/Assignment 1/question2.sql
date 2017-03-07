@@ -2,7 +2,7 @@ CREATE TABLE students(
   kuid           CHAR(6),
   name           VARCHAR,
   birthday       DATE,
-  best_friend_kuid CHAR(6) REFERENCES studerende(id),
+  best_friend_kuid CHAR(6) REFERENCES students(kuid),
   PRIMARY KEY (kuid)
 );
 
@@ -34,11 +34,11 @@ CREATE TABLE period(
 );
 
 CREATE TABLE offered(
-  course_id INT REFERENCES kurser(id),
+  course_id INT REFERENCES courses(id),
   year      INT,
   block     INT,
   semester  BOOLEAN,
-  FOREIGN KEY (year, block, semester) REFERENCES periode(year, block, semester),
+  FOREIGN KEY (year, block, semester) REFERENCES period(year, block, semester),
   PRIMARY KEY (course_id, year, block, semester)
 );
 
@@ -49,15 +49,15 @@ CREATE TABLE lecturers(
 );
 
 CREATE TABLE associated(
-  course_id        INT REFERENCES kurser(id),
+  course_id        INT REFERENCES courses(id),
   lecturer_email VARCHAR(100) REFERENCES lecturers(email),
   PRIMARY KEY (course_id, lecturer_email)
 );
 
 CREATE TABLE lectures(
   lecture_id  INT,
-  course_id   INT REFERENCES kurser(id),
-  responsible_email VARCHAR(100) REFERENCES undervisere(email),
+  course_id   INT REFERENCES courses(id),
+  responsible_email VARCHAR(100) REFERENCES lecturers(email),
   weekno      INT, /* ISO 8601 */
   Weekday     INT, /* Mon = 1, Tue = 2, ... */
   start_time  TIME,
