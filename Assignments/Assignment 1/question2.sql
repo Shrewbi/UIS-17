@@ -1,69 +1,67 @@
 CREATE TABLE studerende(
-  id CHAR(6),
-  name VARCHAR,
-  birthday DATE,
-  best_friend_id CHAR(6),
-  PRIMARY KEY(id)
+  id             CHAR(6),
+  name           VARCHAR,
+  birthday       DATE,
+  best_friend_id CHAR(6) REFERENCES studerende(id),
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE venner(
   studerende_id_1 CHAR(6) REFERENCES studerende(id),
-  studerende_id_2 CHAR(6) REFERENCES studerende(id)
+  studerende_id_2 CHAR(6) REFERENCES studerende(id),
+  PRIMARY KEY (studerende_id_1, studerende_id_2)
 );
 
 CREATE TABLE kurser(
-  id INT,
+  id   INT,
   name VARCHAR,
-  PRIMARY KEY(id)
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE tilmelding(
   studerende_id CHAR(6) REFERENCES studerende(id),
-  kursus_id INT REFERENCES kurser(id),
-  vurdering INT,
-  karakter INT
+  kursus_id     INT REFERENCES kurser(id),
+  vurdering     INT,
+  karakter      INT,
+  PRIMARY KEY (studerende_id, kursus_id)
  );
 
 CREATE TABLE periode(
-  year INT,
-  block INT,
-  semester BOOLEAN,
-  PRIMARY KEY(year, block, semester)
+  year     INT,
+  block    INT,
+  semester BOOLEAN, /* For courses streching two blocks */
+  PRIMARY KEY (year, block, semester)
 );
 
 CREATE TABLE udbud(
-  kursus_id INT,
-  year INT,
-  block INT,
-  semester BOOLEAN, /* Reserved for courses streching more than 2 blocks */
-  udbudt BOOLEAN, /* Is the course offered? */
-  FOREIGN KEY(kursus_id) REFERENCES kurser(id),
-  FOREIGN KEY(year)      REFERENCES periode(year),
-  FOREIGN KEY(block)     REFERENCES periode(block),
-  FOREIGN KEY(semester)    REFERENCES periode(semester)
+  kursus_id INT REFERENCES kurser(id),
+  year      INT,
+  block     INT,
+  semester  BOOLEAN,
+  FOREIGN KEY (year, block, semester)
+    REFERENCES periode(year, block, semester),
+  PRIMARY KEY (kursus_id, year, block, semester)
 );
 
 CREATE TABLE undervisere(
   email VARCHAR(100),
-  name VARCHAR(100),
-  PRIMARY KEY(email)
+  name  VARCHAR(100),
+  PRIMARY KEY (email)
 );
 
 CREATE TABLE tilknyttet(
-  kursus_id INT REFERENCES kurser(id),
-  underviser_email VARCHAR(100) REFERENCES undervisere(email)
+  kursus_id        INT REFERENCES kurser(id),
+  underviser_email VARCHAR(100) REFERENCES undervisere(email),
+  PRIMARY KEY (kursus_id, underviser_email)
 );
 
 CREATE TABLE forelæsning(
-  forelæsning_id INT,
-  kursus_id INT REFERENCES kurser(id),
-  ugenummer INT,
-  ugedag INT, /* 1: mandag, 2: tirsdag, etc. */
-  start_time TIME,
-  end_time TIME
-);
-
-CREATE TABLE ansvarlig(
-  underviser_email VARCHAR(100) REFERENCES undervisere(email),
-  forelæsning_id INT REFERENCES forelæsning(forelæsning_id)
+  forelæsning_id  INT,
+  kursus_id       INT REFERENCES kurser(id),
+  ansvarlig_email VARCHAR(100) REFERENCES undervisere(email),
+  ugenummer       INT, /* ISO 8601 */
+  ugedag          INT, /* Mon = 1, Tue = 2, ... */
+  start_time      TIME,
+  end_time        TIME,
+  PRIMARY KEY (forelæsning_id)
 );
