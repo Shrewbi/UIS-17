@@ -1,0 +1,65 @@
+On 16 Feb 2017, at 15:47, Mikkel <mikkel@rasmusen.dk> wrote:
+Hej Christopher,
+Her er vores kursusbeskrivelse:
+https://kurser.ku.dk/course/ndab16009u/2016-2017
+Fokus for kurset er at forsøge at analysere brugerens behov, afgrænse problemområdet og designe en løsning, der indeholder "ikke-trivielle" ændringer til et SQL databasesystem - i det her tilfælde ville oprettelsen af en helt ny database helt sikkert tælle som ikke-trivielt.
+De andre i gruppen er åbne for også at arbejde med brugergrænsefladen, og vores instruktor synes også at en analyse af det kunne være en interessant tilføjelse til projektet, så det kan godt være jeg var lidt for tilbageholdende omkring det da vi talte sammen.
+Jeg tror relativt hurtigt vi kunne få databasen og CMS'et til det sat op, og så gå videre og arbejde med det grafiske efterfølgende.
+Venlig hilsen Mikkel Rasmusen
+
+------------------------------
+
+On Thu, 16 Feb 2017 16:02:02 +0100
+Chris <chris@kvorning.dk> wrote:
+Hej Mikkel
+Det lyder rigtig godt, og kunne sagtens spille sammen med opgaven der ligger foran os.
+Mere præcist kan jeg måske uddybe lidt om det færdige produkt.
+ 	- Skal indeholde 3 sprog, der aktivt kan skiftes imellem
+ 		- Her er det fordelagtigt hvis (når det nu bliver lavet i web teknologi), at man måske indtænker noget AJAX, hårde overgange er
+ 		ikke at fortrække, så ved valg af nyt sprog må det gerne ske flydende. (Det KAN ske, at man blot vælger sprog ved aktivering af installation)
+ 	- CMS system til at ændre tekst og billeder ved hvert punkt. (Skal være tilgængeligt for ikke tekniske personer)
+		- Indhold i CMS kunne bl.a. være: Billeder, Film, Overskrift, Beskrivelse, Brødtekst (Hvis der er for mange billeder, kan man evt. swipe igennem dem)
+ 	- Ved opstart, loades en .json/.xml/.csv fil og placerer de forskellige spots på kortet.
+ 		monument.dk <http://monument.dk/>	
+ 	- Systemet bliver bygget til EN browser (Chrome højst sandsynligt) og kun EN touchskærm, der skal derfor ikke tages højde for om hvorvidt det er responsivt.
+ 	- Brugerflade elementer til front-end bliver leveret af Kvorning
+	- Opsætning af Hardware bliver klaret af Kvorning
+Det er værd at bemærke kunden er opmærksom på hvor flydende en oplevelse det bliver.
+Bedste hilsner/Best regards
+Christopher Lassen
+Interaktions Designer
+
+------------------------------
+
+On Thu, 16 Feb 2017 22:41:22 +0100
+"Mikkel" <mikkel@rasmusen.dk> wrote:
+Hej Christopher,
+Jeg synes det lyder spændende, og jeg sender den nye information videre til de andre gruppemedlemmer.
+Vi krydser fingre for at i får opgaven :)
+Venlig hilsen Mikkel Rasmusen
+
+------------------------------
+
+On 27 Feb 2017, at 14:50, Mikkel <mikkel@rasmusen.dk> wrote:
+
+Hej Christopher,
+Jeg ville lige høre om der var noget nyt?
+Vi skal udarbejde løbende statusrapporter, og den første er ved at nærme sig, så det ville være rart at kunne be- eller afkræfte om det bliver dette projekt vi skal arbejde med.
+
+Venlig hilsen Mikkel Rasmusen
+
+------------------------------
+
+Hej Mikkel
+
+Vi har desværre intet hørt endnu vedr. opgaven, og har ikke noget klart bud på hvornår vi får et svar,
+da den endelige deadline ligger langt ude i fremtiden, er det også svært at spå om.
+
+Jeg skal nok give jer besked så snart jeg ved noget nyt, og bliver i nød til at tage en anden case,
+så skal i endelig bare gøre det.
+
+Bedste hilsner/Best regards
+
+Christopher Lassen
+Interaktions Designer
+
