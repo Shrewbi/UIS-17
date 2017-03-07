@@ -2,7 +2,7 @@ CREATE TABLE students(
   kuid           CHAR(6),
   name           VARCHAR,
   birthday       DATE,
-  best_friend_id CHAR(6) REFERENCES studerende(id),
+  best_friend_kuid CHAR(6) REFERENCES studerende(id),
   PRIMARY KEY (kuid)
 );
 
@@ -33,13 +33,12 @@ CREATE TABLE period(
   PRIMARY KEY (year, block, semester)
 );
 
-CREATE TABLE offering(
+CREATE TABLE offered(
   course_id INT REFERENCES kurser(id),
   year      INT,
   block     INT,
   semester  BOOLEAN,
-  FOREIGN KEY (year, block, semester)
-    REFERENCES periode(year, block, semester),
+  FOREIGN KEY (year, block, semester) REFERENCES periode(year, block, semester),
   PRIMARY KEY (course_id, year, block, semester)
 );
 
