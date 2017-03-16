@@ -1,0 +1,16 @@
+Interview til CMS-brugeren
+
+* Pre prototype *
+- Introduktion (hvem er vi, hvor kommer vi fra, hvad hedder vi, formål)
+- Forklaring om produkt (hvad er dets formål?)
+- Har du brugt et CMS før?
+- Hvad forventer du at kunne på et sådanne et CMS
+
+
+- Vis papir prototype (giv brugeren en pind som fungerer som en mus, lad en af os være computeren der tildeler nye papirer som fungerer som sider på CMS'et)
+
+* Post prototype *
+- Var der noget du fandt svært ved prototypen?
+- Var der noget der manglede?
+- Hvad drømmer du om med sådanne et system? (Mener min interaktionsdesign professor er en god idé at spørge om til sidst)
+- Tak for din tid
