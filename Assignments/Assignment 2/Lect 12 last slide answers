@@ -1,0 +1,47 @@
+1) Investigations
+Still no answer from the design company.
+Waiting for feedback on our initial MUST report.
+
+2) Interviews
+Assuming we do not receive an answer from the design company, we plan to interview other possible user candidates.
+We plan to interview a data-entry user (about the CMS / data entry module) and a front-end user (about the interactive map).
+
+Interview points for CMS-users:
+- How would you imagine the workflow if you were asked to do X?
+- What features would make it easier for you to perform these tasks?
+- If you had to enter the same text on 100 different objects, how would you do that?
+- Where would you want to be able to upload videos from? Your own computer? Youtube? Vimeo? Others?
+- What kind of interface would be useful for uploading images? Batch uploading?
+
+* Would probably be a good idea to perform the interview after the mockup? Or ask some questions before and others after the mockup presentation.
+
+
+Interview points for front-end-users:
+- What features would you expect to be in a product of this type?
+- How would you navigate the map? Drag, swipe, on-screen buttons?
+- How would you make the location dots visible without being annoying?
+- - Blinking? Pulsating? Powerful colors?
+* After the mockup:
+- Did you feel any features were missing?
+- Were any actions more cumbersome than you expected / would like?
+
+
+3) Mock-ups / prototypes
+Cardboard / pen & paper mockup for CMS, allowing interactive testing of the design before implementation begins.
+Manifestation I guess?
+Will be evaluated on whether the test participant can succesfully accomplish the following tasks:
+- Creating a new object (location)
+- Adding fields to the object
+- Edit an existing object
+- Remove an object
+- Copy an object
+- Make several objects use the same field
+- Adding media (images, video, audio) to an object
+
+Initially also cardboard mockup for end-user testing, to identify possible design problems before implementation begins.
+Also a manifestation, I guess.
+Will be evaluated on whether the test participant can succesfully accomplish the following tasks:
+- Navigate the map: Move focus/camera, zoom in and out
+- Click on flashing dots ¯\_(ツ)_/¯
+- Read text, view media
+
