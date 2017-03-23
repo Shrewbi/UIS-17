@@ -1,0 +1,9 @@
+- Version control (p4v, svn, git, hg ?): git, Det er hvad vi kender til, det sikrer version kontrol, endvidere tillader det os at arbejde på forskellige moduler samtidig hvor vi så kan merge det senere. 
+- Metode (agil, traditioel): Hvad bruger vi? Hvorfor gør vi det over noget andet? Tjek slides for hjælp til valg af metode
+- Baseline plan: Tidsplan osv.
+- Modeller (UML, ER?, Component design?): (Det ikke noget nogen giver en fuck om og læses nok heller ikke af nogle, men hvis det mangler trækker det ned, "citat" fra forelæsning)
+
+
+
+
+Forklar altid hvorfor du har gjort hvad du har gjort, hvorfor koder vi php/html/javascript? Fordi kunden bad om det, etc. etc.
