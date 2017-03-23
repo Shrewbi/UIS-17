@@ -35,6 +35,19 @@ INTERSECT
   WHERE prot_type = 'fibrous'
 )
 
+-- Martins alternative, pretty sure the above result should be a UNION and not an intersect --
+  SELECT DISTINCT(gene_name) FROM
+ ( SELECT 
+    g.gid
+    , p.pid
+    , g.name AS gene_name
+    , p.type AS prot_type
+  FROM gene g
+  JOIN influences i ON g.gid = i.gid
+  JOIN protein p ON i.pid = p.pid
+  WHERE p.type = 'membrane' OR p.type = 'fibrous') AS T
+
+
 -- Task 3: List names of proteins influenced by gene "TP53", but not gene "BCO2"
 
 WITH gp AS (

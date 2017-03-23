@@ -67,6 +67,7 @@ INSERT INTO Gene VALUES(42, 'gennavn42');
 
 INSERT INTO Gene VALUES(43, 'TP53');
 INSERT INTO Gene VALUES(44, 'BC02');
+INSERT INTO Gene VALUES(45, 'ABC2');
 
 
 INSERT INTO Protein VALUES(1, 'protnavn1', 'membrane');
@@ -118,3 +119,4 @@ INSERT INTO Influences VALUES(43, 1);
 INSERT INTO Influences VALUES(44, 2);
 INSERT INTO Influences VALUES(43, 3);
 INSERT INTO Influences VALUES(44, 4);
+INSERT INTO Influences VALUES(45, 5);
