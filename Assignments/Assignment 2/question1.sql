@@ -28,7 +28,7 @@ WITH gp AS (
   FROM gp
   WHERE prot_type = 'membrane'
 )
-INTERSECT
+UNION
 (
   SELECT gene_name
   FROM gp
@@ -73,6 +73,8 @@ EXCEPT
   WHERE gene_name = 'BCO2'
 )
 
+-- above confirmed working --
+
 -- Task 4: List names of genes and protein counts that influence more than 42 proteins
 
 SELECT
@@ -82,6 +84,8 @@ FROM gene g
 JOIN influences i ON g.gid = i.gid
 GROUP BY g.name
 HAVING COUNT(*) > 42
+
+-- above confirmed working --
 
 -- Task 5: List pairs of proteins that influence precisely the same genes
 
