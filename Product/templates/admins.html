@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type="text/javascript">
+$(function(){
+  var addAdminToTable = function(row) {
+    // Get table body
+    var tbody = $('#admins-table tbody');
+
+    // Create row
+    var tr = $('<tr>');
+
+    // Create element that deletes the row
+    var a = $('<a href="#">Delete</a>').click(function() {
+      var adminId = row["id"];
+      $.ajax({
+        url: '/api/admins/' + adminId,
+        type: 'DELETE',
+        success: function(result) {
+          tr.remove();
+        }
+      });
+    });
+
+    // Set up row and add to table
+    $('<td>').html(row["id"]).appendTo(tr);
+    $('<td>').html(row["username"]).appendTo(tr);
+    $('<td>').append(a).appendTo(tr);
+    tbody.append(tr);
+  };
+
+  // Load all admins
+  $.get("/api/admins", function(data) {
+    // Add each row in data to table
+    $.each(data["data"], function(i, row) {
+      addAdminToTable(row);
+    });
+  });
+
+  // Add submit handling to form for creating new admins
+  var form = $('#form-create-admin');
+  form.submit(function(e) {
+    // Create data package
+    var data = {};
+    $.each(form.serializeArray(), function(i, row){
+      data[row["name"]] = row["value"];
+    });
+
+    if (data["username"] && data["username"] != "") {
+      // Send create
+      $.ajax({
+        url: '/api/admins',
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result) {
+          // Add new row to table
+          addAdminToTable(result["data"]);
+        }
+      });
+    }
+
+    // Prevent regular submit action
+    e.preventDefault();
+  });
+});
+</script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table" id="admins-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      <form id="form-create-admin" class="form-signin">
+        <h3>Add admin</h3>
+        <label for="username" class="sr-only">Username</label>
+        <input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="">
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Password" required="">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Create</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
