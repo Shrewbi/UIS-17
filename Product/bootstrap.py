@@ -28,8 +28,8 @@ def create_tables():
         CREATE TABLE template_fields(
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
-          shared BOOLEAN NOT NULL,
-          shared_media_id INT REFERENCES media(id) ON DELETE CASCADE
+          template_id INT REFERENCES templates(id),
+          media_id INT REFERENCES media(id) ON DELETE CASCADE
         );
 
         CREATE TABLE items(
@@ -42,6 +42,7 @@ def create_tables():
         CREATE TABLE item_fields(
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
+          item_id INT REFERENCES items(id),
           media_id INT REFERENCES media(id) ON DELETE CASCADE
         );
 
