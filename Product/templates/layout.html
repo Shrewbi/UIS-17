@@ -83,7 +83,7 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               {% if session.logged_in %}
-              <li><a href="/admin/map">Manage map</a></li>
+              <li class="{{ 'active' if is_map_page }}"><a href="/admin/map">Manage map</a></li>
               <li class="{{ 'active' if is_admin_page }}"><a href="/admin/users">Manage admins</a></li>
               {% endif %}
             </ul>

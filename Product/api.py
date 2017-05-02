@@ -4,7 +4,7 @@ import endpoints.admins
 import endpoints.media
 import endpoints.templates
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path = "/static", static_folder = "static")
 app.debug = True
 app.secret_key = "314"
 

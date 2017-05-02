@@ -5,7 +5,7 @@ bp = Blueprint('site', __name__)
 
 @bp.route("/")
 def home():
-    return render_template("map.html")
+    return render_template("index.html")
 
 @bp.route("/test")
 def test():
@@ -36,3 +36,7 @@ def logout():
 @bp.route("/admin/users")
 def admins():
     return render_template("admins.html", is_admin_page=True)
+
+@bp.route("/admin/map")
+def maps():
+    return render_template("map.html", is_map_page=True)
