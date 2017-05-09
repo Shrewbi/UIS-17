@@ -2,11 +2,6 @@ import database
 
 def create_tables():
     database.execute("""
-        CREATE TABLE test(
-            id SERIAL,
-            body VARCHAR
-        );
-
         CREATE TABLE admins(
           id SERIAL PRIMARY KEY,
           username VARCHAR(255),
@@ -21,8 +16,7 @@ def create_tables():
 
         CREATE TABLE templates(
           id SERIAL PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          creator_admin_id INT REFERENCES admins(id)
+          name VARCHAR(255) NOT NULL
         );
 
         CREATE TABLE template_fields(

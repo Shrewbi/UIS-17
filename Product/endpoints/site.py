@@ -7,13 +7,6 @@ bp = Blueprint('site', __name__)
 def home():
     return render_template("index.html")
 
-@bp.route("/test")
-def test():
-    query = "select t.id, t.body from test t"
-    rows = database.execute(query)
-    res = [{"id" : r[0], "body" : r[1]} for r in rows]
-    return jsonify(data=res)
-
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
