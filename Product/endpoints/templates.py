@@ -71,7 +71,7 @@ def add_template_field(template_id):
     # Insert into db
     query = """
         insert into template_fields(name, template_id, media_id)
-        values('{}', '{}', '{}')
+        values('{}', {}, {})
         returning id, name, template_id, media_id
     """
     query = query.format(name, template_id, media_id)
