@@ -1,11 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
+
+
+
   <!-- Main component for a primary marketing message or call to action -->
   <div class="jumbotron">
     <h1>Manage map</h1>
-    <ul>
-    	<li><a href="#">Modify items</a> - Gør som manage admins, hvor man kan tilføje, slette, og trykke på navnet for at redigere</li>
-    	<li><a href="#">Modify templates</a> - Add / edit / delete</li>
-    </ul>
+    <form action = "http://localhost:5000/api/uploadfile" method = "POST" 
+         enctype = "multipart/form-data">
+         <input type = "file" name = "file" />
+         <input type = "submit"/>
+      </form>
+
   </div>
 {% endblock %}
