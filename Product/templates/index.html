@@ -2,71 +2,28 @@
 {% block body %}
 
 <script type="text/javascript">
-// Load data from endpoints
-d3.queue()
-  .defer(d3.json, "/api/items")
-  .defer(d3.json, "/api/items/paths")
-  .await(ready);
+$(function() {
+  initMap("map");
+  loadItemsIntoMap(null, enterItem, clickItem, leaveItem);
+});
 
-// Called when data has been loaded
-function ready(error, items, paths) {
-  addItems(items["data"]);
-  //addPaths(paths["data"]);
+function enterItem(d) {
+  var info = d3.select('#item_info').html("");
+
+  info.append("h1").text(d.template.name);
+
+  for (i in d.fields) {
+    info.append("h3").text(d.fields[i].name);
+    info.append("p").text(d.fields[i].value);
+  }
 }
 
-function addItems(items) {
-  var mapDiv = document.getElementById("map");
+function clickItem(d) {
 
-  var size = {
-    width: mapDiv.clientWidth,
-    height: mapDiv.clientWidth * 0.75
-  };
-
-  var map = d3.select('#map')
-              .style('width', size.width)
-              .style('height', size.height)
-              .style('border-radius', '10px')
-              .style('background', 'url("{{ url_for('static', filename = 'ex2.png') }}")')
-              .style('background-size', '100% 100%');
-
-  var svg = map.append('svg')
-               .style('padding', '40px');
-
-  var xScale = d3.scaleLinear()
-                 .domain([0, 100])
-                 .range([0, size.width]);
-
-  var yScale = d3.scaleLinear()
-                 .domain([0, 100])
-                 .range([0, size.height]);
-
-  svg.selectAll('rect')
-     .data(items)
-     .enter()
-     .append('rect')
-     .attr('fill', 'red')
-     .attr('width', '15px')
-     .attr('height', '15px')
-     .attr('x', function(d){ return xScale(d.coordinates.x); })
-     .attr('y', function(d){ return yScale(d.coordinates.y); })
-     .on('mouseenter', function(d){
-       var info = d3.select('#item_info').html("");
-
-       info.append("h1").text(d.template.name);
-
-       for (i in d.fields) {
-         info.append("h3").text(d.fields[i].name);
-         info.append("p").text(d.fields[i].value);
-       }
-     })
-     .on('mouseleave', function(d){
-       d3.select('#item_info').html("");
-     })
-     ;
 }
 
-function addPaths(paths) {
-
+function leaveItem(d) {
+  d3.select('#item_info').html("");
 }
 </script>
 

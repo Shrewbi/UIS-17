@@ -1,0 +1,252 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<script type="text/javascript">
+$(function() {
+  cancelCreate();
+  initMap("map");
+  onMapClick(clickMap);
+  reloadItems(null);
+});
+
+function reloadItems(callback) {
+  $('.permanent-item').remove();
+  loadItemsIntoMap(callback, null, clickItem, null);
+}
+
+function cancelCreate() {
+  // Remove temp item from map
+  $('.temporary-item').remove();
+
+  // Remove item editor
+  $('#item-editor').hide();
+}
+
+function clickItem(d) {
+  // Prevent clickMap propagation
+  d3.event.stopPropagation();
+
+  // Cancel any current creation
+  cancelCreate();
+
+  // Load item, show editable box for it
+  showItemEditor(d);
+}
+
+function clickMap(xCoord, yCoord) {
+  // Cancel any current creation
+  cancelCreate();
+
+  // Add temporary dot to map
+  mapState.svg
+    .append('rect')
+    .attr('class', 'temporary-item')
+    .attr('x', mapState.scale.x(xCoord))
+    .attr('y', mapState.scale.y(yCoord));
+
+  // Show item editor with selection set
+  showCreateItemEditor(xCoord, yCoord);
+}
+
+function showCreateItemEditor(xCoord, yCoord) {
+  $ed = $('#item-editor');
+  $ed.show();
+  $ed.find('#editonly').hide();
+  $ed.find('h3').text("Creating item");
+
+  updateTemplateOptions(function(row) {
+    $('#template-button').text(row.name).append(' <span class="caret"></span>');
+
+    var data = {
+      "template_id" : row.id,
+      "x_coordinate" : xCoord,
+      "y_coordinate" : yCoord
+    };
+
+    $.ajax({
+      url: '/api/items',
+      type: 'POST',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(result) {
+        cancelCreate();
+        reloadItems(function() {
+          var itemId = result["data"].id;
+          var item = $('.permanent-item[data-id="' + itemId + '"]');
+          item.d3Click();
+        });
+      }
+    });
+  });
+}
+
+function showItemEditor(item) {
+  $ed = $('#item-editor');
+  $ed.show();
+  $ed.find('#template-button').text(item.template.name).addClass("disabled");
+  $ed.find('#editonly').show();
+  $ed.find('h3').text("Editing item");
+
+  $table = $('#admins-table');
+  $table.hide();
+
+  $tbody = $('#admins-table tbody');
+  $tbody.html("");
+
+  addField = function(field) {
+    $table.show();
+    var $tr = $("<tr>");
+    $a = $("<a>Delete</a>").on("click", function() {
+      $.ajax({
+        url: '/api/items/' + item.id + '/fields/' + field.id,
+        type: 'DELETE',
+        contentType: 'application/json',
+        success: function(result) {
+          $tr.remove();
+        }
+      });
+    });
+    $tr.append($("<td>").text(field.name))
+       .append($("<td>").text(field.type))
+       .append($("<td>").text(field.value))
+       .append($("<td>").append($a));
+    $tbody.append($tr);
+  };
+
+  $.each(item.fields, function(i, row) {
+    addField(row);
+  });
+
+  $('#field-add button').on("click", function() {
+    // Get input fields
+    $nameField = $('#field-name input');
+    $textField = $('#field-text input');
+
+    if ($nameField.val() == "" || $textField.val() == "") {
+      alert("Fill out the input fields!");
+      return;
+    }
+
+    // First, create media
+    $.ajax({
+      url: '/api/media',
+      type: 'POST',
+      data: JSON.stringify({
+        type: "text",
+        value: $textField.val()
+      }),
+      contentType: 'application/json',
+      success: function(result) {
+        // Get ID of new media
+        var mediaId = result["data"].id;
+
+        // Now create field
+        $.ajax({
+          url: '/api/items/' + item.id + '/fields',
+          type: 'POST',
+          data: JSON.stringify({
+            name: $nameField.val(),
+            media_id: mediaId
+          }),
+          contentType: 'application/json',
+          success: function(result) {
+            // Add field to table
+            addField(result["data"]);
+
+            // Clear input
+            $nameField.val("");
+            $textField.val("");
+          }
+        });
+      }
+    });
+  });
+
+}
+
+function updateTemplateOptions(onclick) {
+
+  $but = $('#template-button').removeClass("disabled").text("Select template");
+
+  $ul = $('#template-options');
+  $ul.html("");
+  $.get("/api/templates", function(data) {
+    $.each(data["data"], function(i, row) {
+      $a = $("<a>").text(row.name).data("id", row.id);
+      $a.on("click", function(e) {
+        onclick(row);
+      });
+      $ul.append($("<li>").append($a));
+    });
+  });
+}
+
+</script>
+
+<style media="screen">
+  form .input-group {
+    margin-bottom: 15px;
+  }
+</style>
+
+<div class="row">
+  <div class="col-md-9">
+    <div id="map">
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div id="item-editor">
+
+      <h3>Create item</h3>
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="template-button">
+          Select template
+          <span class="caret"></span>
+        </button>
+        <ul id="template-options" class="dropdown-menu" aria-labelledby="template-button">
+          <li><a href="#">Action</a></li>
+          <li><a href="#">Another action</a></li>
+        </ul>
+      </div>
+
+      <div id="editonly" style="margin-top: 15px;">
+        <h4>Fields</h4>
+        <table class="table" id="admins-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Value</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+
+        <form>
+          <div class="input-group" id="field-name">
+            <span class="input-group-addon">Name</span>
+            <input type="text" class="form-control" placeholder="Field name" aria-describedby="item-name">
+          </div>
+
+          <div class="input-group" id="field-text">
+            <span class="input-group-addon">Text</span>
+            <input type="text" class="form-control" placeholder="Field value" aria-describedby="item-text">
+          </div>
+
+          <div class="input-group" id="field-add">
+            <button type="button" class="btn btn-default">Add field</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

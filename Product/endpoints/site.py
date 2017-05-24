@@ -32,4 +32,4 @@ def admins():
 
 @bp.route("/admin/map")
 def maps():
-    return render_template("map.html", is_map_page=True)
+    return render_template("manage.html", is_manage_page=True)

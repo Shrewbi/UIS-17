@@ -64,7 +64,95 @@
       .form-signin .bg-danger {
         padding: 10px;
       }
+
+      .permanent-item {
+        fill: red;
+        width: 15px;
+        height: 15px;
+      }
+      .temporary-item {
+        fill: blue;
+        width: 15px;
+        height: 15px;
+      }
     </style>
+
+    <script type="text/javascript">
+    jQuery.fn.d3Click = function () {
+      this.each(function (i, e) {
+        var evt = new MouseEvent("click");
+        e.dispatchEvent(evt);
+      });
+    };
+
+    mapState = { };
+
+    function initMap(idKey) {
+      mapState.div = document.getElementById(idKey);
+
+      mapState.size = {
+        width: mapState.div.clientWidth,
+        height: mapState.div.clientWidth * 0.75
+      };
+
+      mapState.map = d3.select('#' + idKey)
+                       .style('width', mapState.size.width)
+                       .style('height', mapState.size.height)
+                       .style('border-radius', '10px')
+                       .style('background', 'url("{{ url_for('static', filename = 'ex2.png') }}")')
+                       .style('background-size', '100% 100%');
+
+      mapState.svg = mapState.map.append('svg')
+                       .style('width', '100%')
+                       .style('height', '100%');
+
+      mapState.scale = {}
+      mapState.scale.x = d3.scaleLinear()
+                           .domain([0, 100])
+                           .range([0, mapState.size.width]);
+
+      mapState.scale.y = d3.scaleLinear()
+                           .domain([0, 100])
+                           .range([0, mapState.size.height]);
+    }
+
+    function onMapClick(callback) {
+      mapState.svg.on("click", function() {
+        var x = d3.event.offsetX;
+        var y = d3.event.offsetY;
+        var xCoord = mapState.scale.x.invert(x);
+        var yCoord = mapState.scale.y.invert(y);
+        callback(xCoord, yCoord);
+      });
+    }
+
+    function loadItemsIntoMap(cb, onEnter, onClick, onLeave) {
+      // Load data from endpoints
+      d3.queue()
+        .defer(d3.json, "/api/items")
+        .defer(d3.json, "/api/items/paths")
+        .await(function(error, items, paths) {
+          items = items["data"];
+          paths = paths["data"];
+          var svg = mapState.svg;
+          svg.selectAll('rect')
+             .data(items)
+             .enter()
+             .append('rect')
+             .attr('class', 'permanent-item')
+             .attr('data-id', function(d) { return d.id; })
+             .attr('x', function(d){ return mapState.scale.x(d.coordinates.x); })
+             .attr('y', function(d){ return mapState.scale.y(d.coordinates.y); })
+             .on('mouseenter', onEnter)
+             .on('click', onClick)
+             .on('mouseleave', onLeave);
+
+          if (cb) {
+            cb();
+          }
+        });
+    }
+    </script>
   </head>
 
   <body>
@@ -84,7 +172,7 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               {% if session.logged_in %}
-              <li class="{{ 'active' if is_map_page }}"><a href="/admin/map">Manage map</a></li>
+              <li class="{{ 'active' if is_manage_page }}"><a href="/admin/map">Manage map</a></li>
               <li class="{{ 'active' if is_admin_page }}"><a href="/admin/users">Manage admins</a></li>
               {% endif %}
             </ul>

@@ -8,11 +8,11 @@ bp = Blueprint('items', __name__)
 def get_items():
     query = """
         select i.id, i.x_coordinate, i.y_coordinate, t.id, t.name,
-            if.id, if.name, m.type, m.value
+            itf.id, itf.name, m.type, m.value
         from items i
         join templates t on i.template_id=t.id
-        left join item_fields if on i.id=if.item_id
-        left join media m on if.media_id=m.id
+        left join item_fields itf on i.id=itf.item_id
+        left join media m on itf.media_id=m.id
     """
     rows = database.execute(query)
 
@@ -100,20 +100,34 @@ def add_item_field(item_id):
     """
     query = query.format(name, item_id, media_id)
     cursor = database.execute(query)
-
-    # Prepare response
     row = cursor.fetchone()
-    return jsonify(data={
+
+    data={
         "id" : row[0],
         "name" : row[1],
         "item_id" : row[2],
         "media_id" : row[3]
-    })
+    }
+
+    # Get media info
+    query = """
+        select m.type, m.value
+        from media m
+        where m.id = {}
+    """.format(data["media_id"])
+    cursor = database.execute(query)
+    row = cursor.fetchone()
+
+    data["type"] = row[0]
+    data["value"] = row[1]
+
+    # Prepare response
+    return jsonify(data=data)
 
 @bp.route("/api/items/<int:item_id>/fields/<int:item_field_id>", methods=['DELETE'])
 def delete_item_field(item_id, item_field_id):
     query = "delete from item_fields where id = {} and item_id = {}"
-    query = query.format(item_id, item_field_id)
+    query = query.format(item_field_id, item_id)
     database.execute(query)
     return jsonify(data=None)
 
