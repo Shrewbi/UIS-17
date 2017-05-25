@@ -42,7 +42,6 @@ def get_templates():
 
 @bp.route("/api/templates", methods=['POST'])
 def create_template():
-    print("worksbahhhh");
     # Get submit data
     data = request.get_json()
     name = data["name"]

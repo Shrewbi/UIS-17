@@ -15,7 +15,6 @@ def login():
         password = request.form['password']
         if credentials_valid(username, password):
             session['logged_in'] = True
-            print("wow")
             return redirect('/')
         else:
             error = "Invalid credentials"

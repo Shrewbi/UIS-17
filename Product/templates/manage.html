@@ -188,7 +188,6 @@ function updateTemplateOptions(onclick) {
 }
 
 function newTemplate(onclick){
-  console.log("entered");
   $ed = $('#template-form');
   $ed.show();
 
@@ -196,14 +195,12 @@ function newTemplate(onclick){
 
 
   $('#temp-add button').on("click", function() {
-    console.log("button pressed");
     // Get input fields
     $nameField = $('#temp-name input');
     if ($nameField.val() == "") {
       alert("Fill out the input field!");
       return;
     }
-    console.log($nameField.val());
     // First, create media
     $.ajax({
       url: '/api/templates',
@@ -213,7 +210,7 @@ function newTemplate(onclick){
       }),
       contentType: 'application/json',
       success: function(result) {
-        console.log("workssssss");
+        // nothing?
       }
 
     });
