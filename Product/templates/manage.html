@@ -82,6 +82,9 @@ function showCreateItemEditor(xCoord, yCoord) {
 }
 
 function showItemEditor(item) {
+  $('#field-file').hide();
+  $('#field-text').hide();
+  $('#add-field').hide();
   $ed = $('#item-editor');
   $ed.show();
   $ed.find('#template-button').text(item.template.name).addClass("disabled");
@@ -121,9 +124,11 @@ function showItemEditor(item) {
   $('#field-add button').on("click", function() {
     // Get input fields
     $nameField = $('#field-name input');
+    $fileField = $('#field-file input');
     $textField = $('#field-text input');
 
-    if ($nameField.val() == "" || $textField.val() == "") {
+    // UPDATE THIS TO SUPPORT MEDIA
+    if ($nameField.val() == "" || ($textField.val() == "")) {
       alert("Fill out the input fields!");
       return;
     }
@@ -215,10 +220,22 @@ function newTemplate(onclick){
 
     });
   });
+}
 
-
+function UploadText(onclick){
+  $('#field-file').hide();
+  $('#field-text').show();
 
 }
+function UploadImage(onclick){
+  $('#field-text').hide();
+  $('#field-file').show();
+}
+function UploadVideo(onclick){
+  $('#field-text').hide();
+  $('#field-file').show();
+}
+
 
 
 </script>
@@ -289,16 +306,31 @@ function newTemplate(onclick){
           </tbody>
         </table>
 
-        <form>
+        <form action = "http://localhost:5000/api/uploadfile" method = "POST" 
+         enctype = "multipart/form-data">
           <div class="input-group" id="field-name">
             <span class="input-group-addon">Name</span>
             <input type="text" class="form-control" placeholder="Field name" aria-describedby="item-name">
+          </div>
+
+          <div class="input-group" id="field-radio">
+            Choose media to upload: 
+            <input type="radio" onclick="UploadText()" name="media" value="Text"> Text 
+            <input type="radio" onclick="UploadImage()" name="media" value="Image"> Image 
+            <input type="radio" onclick="UploadVideo()" name="media" value="Video"> Video
           </div>
 
           <div class="input-group" id="field-text">
             <span class="input-group-addon">Text</span>
             <input type="text" class="form-control" placeholder="Field value" aria-describedby="item-text">
           </div>
+
+          <div class="input-group" id="field-file">
+            <span class="input-group-addon">File</span>
+            <input type="file" class="form-control" placeholder="Field file" aria-describedby="item-text">
+          </div>
+
+
 
           <div class="input-group" id="field-add">
             <button type="button" class="btn btn-default">Add field</button>

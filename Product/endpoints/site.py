@@ -32,3 +32,6 @@ def admins():
 @bp.route("/admin/map")
 def maps():
     return render_template("manage.html", is_manage_page=True)
+@bp.route("/uploadfile")
+def uploadfile():
+    return render_template("uploadfile.html", is_manage_page=True)
