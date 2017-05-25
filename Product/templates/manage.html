@@ -20,6 +20,7 @@ function cancelCreate() {
 
   // Remove item editor
   $('#item-editor').hide();
+  $('#template-form').hide();
 }
 
 function clickItem(d) {
@@ -164,6 +165,11 @@ function showItemEditor(item) {
 
 }
 
+
+
+
+
+
 function updateTemplateOptions(onclick) {
 
   $but = $('#template-button').removeClass("disabled").text("Select template");
@@ -181,6 +187,43 @@ function updateTemplateOptions(onclick) {
   });
 }
 
+function newTemplate(onclick){
+  console.log("entered");
+  $ed = $('#template-form');
+  $ed.show();
+
+  $but = $('#new-temp').addClass("disabled").text("New template");
+
+
+  $('#temp-add button').on("click", function() {
+    console.log("button pressed");
+    // Get input fields
+    $nameField = $('#temp-name input');
+    if ($nameField.val() == "") {
+      alert("Fill out the input field!");
+      return;
+    }
+    console.log($nameField.val());
+    // First, create media
+    $.ajax({
+      url: '/api/templates',
+      type: 'POST',
+      data: JSON.stringify({
+        name: $nameField.val()
+      }),
+      contentType: 'application/json',
+      success: function(result) {
+        console.log("workssssss");
+      }
+
+    });
+  });
+
+
+
+}
+
+
 </script>
 
 <style media="screen">
@@ -192,10 +235,33 @@ function updateTemplateOptions(onclick) {
 <div class="row">
   <div class="col-md-9">
     <div id="map">
+
     </div>
   </div>
 
   <div class="col-md-3">
+
+      <div class="btn-group" style="width:100%">
+         <center><button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="new-temp" onclick="newTemplate()">
+          New Template
+        </button></center>
+
+        <form>
+        <div id="template-form">
+          <div class="input-group" id="temp-name" style="margin-top:10px;">
+            <span class="input-group-addon">Name</span>
+            <input type="text" class="form-control" placeholder="Template name" aria-describedby="item-name">
+          </div>
+
+          <center><div class="input-group" id="temp-add">
+            <button type="button" class="btn btn-default">Add template</button>
+          </div></center>
+          </div>
+        </form>
+
+
+    </div>
+
     <div id="item-editor">
 
       <h3>Create item</h3>
@@ -241,6 +307,9 @@ function updateTemplateOptions(onclick) {
             <button type="button" class="btn btn-default">Add field</button>
           </div>
         </form>
+
+
+
       </div>
 
     </div>

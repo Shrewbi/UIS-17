@@ -1,0 +1,5 @@
+BUGS
+
+1. Creating item > Select Template > tryk på map, sætter item uden at man har trykket "add field" (dermed har fieldet intet navn eller text)
+2. Kan ikke trykke enter for at færdiggøre en form (template fejler, og create item virker ikke)
+3. Unique constraint på template? Fortæl brugeren den allerede findes.
