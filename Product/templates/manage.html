@@ -9,6 +9,8 @@ $(function() {
   reloadItems(null);
 });
 
+$ftype = "";
+
 function reloadItems(callback) {
   $('.permanent-item').remove();
   loadItemsIntoMap(callback, null, clickItem, null);
@@ -21,6 +23,7 @@ function cancelCreate() {
   // Remove item editor
   $('#item-editor').hide();
   $('#template-form').hide();
+  $('#new-temp').removeClass("disabled");
 }
 
 function clickItem(d) {
@@ -128,12 +131,16 @@ function showItemEditor(item) {
     $textField = $('#field-text input');
 
     // UPDATE THIS TO SUPPORT MEDIA
-    if ($nameField.val() == "" || ($textField.val() == "")) {
+    if ($nameField.val() == "" || ($textField.val() == "" && $fileField.val() == "")) {
+      console.log($nameField.val());
+      console.log($textField.val());
+      console.log($fileField.val());
       alert("Fill out the input fields!");
       return;
     }
 
     // First, create media
+
     $.ajax({
       url: '/api/media',
       type: 'POST',
@@ -193,6 +200,7 @@ function updateTemplateOptions(onclick) {
 }
 
 function newTemplate(onclick){
+  $('#tempsuccess').hide();
   $ed = $('#template-form');
   $ed.show();
 
@@ -203,7 +211,7 @@ function newTemplate(onclick){
     // Get input fields
     $nameField = $('#temp-name input');
     if ($nameField.val() == "") {
-      alert("Fill out the input field!");
+      alert("Fill out the template input field!");
       return;
     }
     // First, create media
@@ -215,7 +223,8 @@ function newTemplate(onclick){
       }),
       contentType: 'application/json',
       success: function(result) {
-        // nothing?
+        $('#tempsuccess').show();
+        $nameField.val("");
       }
 
     });
@@ -223,15 +232,18 @@ function newTemplate(onclick){
 }
 
 function UploadText(onclick){
+  $ftype = "text";
   $('#field-file').hide();
   $('#field-text').show();
 
 }
 function UploadImage(onclick){
+  $ftype = "image";
   $('#field-text').hide();
   $('#field-file').show();
 }
 function UploadVideo(onclick){
+  $ftype = "video";
   $('#field-text').hide();
   $('#field-file').show();
 }
@@ -260,7 +272,7 @@ function UploadVideo(onclick){
           New Template
         </button></center>
 
-        <form>
+        <form method="post">
         <div id="template-form">
           <div class="input-group" id="temp-name" style="margin-top:10px;">
             <span class="input-group-addon">Name</span>
@@ -269,6 +281,8 @@ function UploadVideo(onclick){
 
           <center><div class="input-group" id="temp-add">
             <button type="button" class="btn btn-default">Add template</button>
+          <div id="tempsuccess"><p>successfully added template!</p></div> <!-- Return which template was added? -->
+
           </div></center>
           </div>
         </form>
