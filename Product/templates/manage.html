@@ -130,7 +130,8 @@ function showItemEditor(item) {
     $fileField = $('#field-file input');
     $textField = $('#field-text input');
 
-    // UPDATE THIS TO SUPPORT MEDIA
+    // UPDATE THIS TO SUPPORT MEDIA 
+    // Maybe remove this to support mixed media without compartmentalisation by headers? -Mikkel
     if ($nameField.val() == "") {
       alert("Fill out the input fields!");
       return;
@@ -139,39 +140,69 @@ function showItemEditor(item) {
     // First, create media
 
     if($ftype == "text"){
-    $.ajax({
-      url: '/api/media',
-      type: 'POST',
-      data: JSON.stringify({
-        type: "text",
-        value: $textField.val()
-      }),
-      contentType: 'application/json',
-      success: function(result) {
-        // Get ID of new media
-        var mediaId = result["data"].id;
+	    $.ajax({
+	      url: '/api/media',
+	      type: 'POST',
+	      data: JSON.stringify({
+	        type: "text",
+	        value: $textField.val()
+	      }),
+	      contentType: 'application/json',
+	      success: function(result) {
+	        // Get ID of new media
+	        var mediaId = result["data"].id;
 
-        // Now create field
-        $.ajax({
-          url: '/api/items/' + item.id + '/fields',
-          type: 'POST',
-          data: JSON.stringify({
-            name: $nameField.val(),
-            media_id: mediaId
-          }),
-          contentType: 'application/json',
-          success: function(result) {
-            // Add field to table
-            addField(result["data"]);
+	        // Now create field
+	        $.ajax({
+	          url: '/api/items/' + item.id + '/fields',
+	          type: 'POST',
+	          data: JSON.stringify({
+	            name: $nameField.val(),
+	            media_id: mediaId
+	          }),
+	          contentType: 'application/json',
+	          success: function(result) {
+	            // Add field to table
+	            addField(result["data"]);
 
-            // Clear input
-            $nameField.val("");
-            $textField.val("");
-          }
-        });
-      }
-    });
-  }});
+	            // Clear input
+	            $nameField.val("");
+	            $textField.val("");
+	          }
+	        });
+	      }
+	    });
+	}
+
+    else if ($ftype != "text"){
+    	var form = document.getElementById('submission-form');
+		var fileSelect = document.getElementById('file-select');
+		var uploadButton = document.getElementById('upload-button');
+		form.onsubmit = function(event) {
+  			event.preventDefault();
+  			uploadButton.innerHTML = 'Uploading...';
+  		}
+  		var file = fileSelect.file;
+  		var formData = new FormData();
+  		if (!file.type.match('image.*') && !file.type.match('video.*')) {
+    		alert("Supported filetypes: 'png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4', 'avi', 'mpeg'");
+  		}
+  		formData.append('uploadFile', file, file.name);
+
+  		var xhr = new XMLHttpRequest();
+  		xhr.open('POST', 'http://localhost:5000/api/uploadfile', true);
+  		// Set up a handler for when the request finishes.
+		xhr.onload = function () {
+			if (xhr.status === 200) {
+			    // File(s) uploaded.
+			    uploadButton.innerHTML = 'Upload';
+  			} else {
+    			alert('An error occurred!');
+  			}
+		};
+		xhr.send(formData);
+    }
+});
 
 }
 
@@ -324,7 +355,7 @@ function UploadVideo(onclick){
           </tbody>
         </table>
 
-        <form action = "http://localhost:5000/api/uploadfile" method = "POST" 
+        <form id="submission-form" action = "http://localhost:5000/api/uploadfile" method = "POST" 
          enctype = "multipart/form-data">
           <div class="input-group" id="field-name">
             <span class="input-group-addon">Name</span>
@@ -345,14 +376,14 @@ function UploadVideo(onclick){
 
           <div class="input-group" id="field-file">
             <span class="input-group-addon">File</span>
-            <input type="file" name="file" class="form-control" placeholder="Field file" aria-describedby="item-text">
+            <input type="file" id="file-select" name="uploadFile" class="form-control" placeholder="Field file" aria-describedby="item-text">
           </div>
 
 
 
           <div class="input-group">
             <button type="button" id="field-add" class="btn btn-default">Add text field</button>
-            <button type="submit" id="filesub" class="btn btn-default">Add field</button>
+            <button type="submit" id="upload-button" class="btn btn-default">Add media field</button>
           </div>
         </form>
 
