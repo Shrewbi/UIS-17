@@ -40,7 +40,7 @@ def create_media():
 
     # Check it's a valid media type
     if mtype != "text":
-        upload_file();
+        return abort(400)
 
     if mtype == "text":
         # Insert into db
