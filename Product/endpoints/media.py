@@ -1,6 +1,7 @@
 from flask import *
 from helpers import *
 import os
+import errno
 
 bp = Blueprint('media', __name__)
 
@@ -8,6 +9,13 @@ UPLOAD_FOLDER = os.path.join(os.getcwd(), 'media')
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4', 'avi', 'mpeg'])
 ALLOWED_EXTENSIONS_IMG = set(['png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_EXTENSIONS_VID = set(['mov', 'mp4', 'avi', 'mpeg'])
+
+def make_sure_path_exists(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
 
 def file_extension(filename):
     return filename.rsplit('.', 1)[1].lower()
@@ -54,6 +62,7 @@ def delete_media(media_id):
 
 @bp.route("/api/uploadfile", methods=['GET', 'POST'])
 def upload_file():
+    make_sure_path_exists(UPLOAD_FOLDER)
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
