@@ -9,8 +9,6 @@ $(function() {
   reloadItems(null);
 });
 
-$ftype = "";
-
 function reloadItems(callback) {
   $('.permanent-item').remove();
   loadItemsIntoMap(callback, null, clickItem, null);
@@ -88,6 +86,8 @@ function showItemEditor(item) {
   $('#field-file').hide();
   $('#field-text').hide();
   $('#add-field').hide();
+  $('#filesub').hide();
+  $('#field-add').hide();
   $ed = $('#item-editor');
   $ed.show();
   $ed.find('#template-button').text(item.template.name).addClass("disabled");
@@ -124,23 +124,21 @@ function showItemEditor(item) {
     addField(row);
   });
 
-  $('#field-add button').on("click", function() {
+  $('#field-add').on("click", function() {
     // Get input fields
     $nameField = $('#field-name input');
     $fileField = $('#field-file input');
     $textField = $('#field-text input');
 
     // UPDATE THIS TO SUPPORT MEDIA
-    if ($nameField.val() == "" || ($textField.val() == "" && $fileField.val() == "")) {
-      console.log($nameField.val());
-      console.log($textField.val());
-      console.log($fileField.val());
+    if ($nameField.val() == "") {
       alert("Fill out the input fields!");
       return;
     }
 
     // First, create media
 
+    if($ftype == "text"){
     $.ajax({
       url: '/api/media',
       type: 'POST',
@@ -173,7 +171,7 @@ function showItemEditor(item) {
         });
       }
     });
-  });
+  }});
 
 }
 
@@ -235,17 +233,23 @@ function UploadText(onclick){
   $ftype = "text";
   $('#field-file').hide();
   $('#field-text').show();
+  $('#filesub').hide();
+  $('#field-add').show();
 
 }
 function UploadImage(onclick){
   $ftype = "image";
   $('#field-text').hide();
   $('#field-file').show();
+  $('#filesub').show();
+  $('#field-add').hide();
 }
 function UploadVideo(onclick){
   $ftype = "video";
   $('#field-text').hide();
   $('#field-file').show();
+  $('#filesub').show();
+  $('#field-add').hide();
 }
 
 
@@ -341,13 +345,14 @@ function UploadVideo(onclick){
 
           <div class="input-group" id="field-file">
             <span class="input-group-addon">File</span>
-            <input type="file" class="form-control" placeholder="Field file" aria-describedby="item-text">
+            <input type="file" name="file" class="form-control" placeholder="Field file" aria-describedby="item-text">
           </div>
 
 
 
-          <div class="input-group" id="field-add">
-            <button type="button" class="btn btn-default">Add field</button>
+          <div class="input-group">
+            <button type="button" id="field-add" class="btn btn-default">Add text field</button>
+            <button type="submit" id="filesub" class="btn btn-default">Add field</button>
           </div>
         </form>
 

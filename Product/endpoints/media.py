@@ -32,11 +32,11 @@ def create_media():
 
     # Check it's a valid media type
     if mtype != "text":
-        return abort(400)
+        upload_file();
 
     if mtype == "text":
         # Insert into db
-        query = "insert into media(type, value) values('{}', '{}') returning id, type, value"
+        query = "INSERT INTO media(type, value) VALUES('{}', '{}') returning id, type, value"
         query = query.format(mtype, value)
         cursor = database.execute(query)
 
@@ -83,17 +83,7 @@ def upload_file():
             query = query.format(filename, givenid)
             cursor = database.execute(query)
             row = cursor.fetchone()
-            return jsonify(data={"id" : row[0], "type" : row[1], "value" : row[2]})
-            '''
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))'''
+            return redirect('http://localhost:5000/admin/map')
+            
                                     
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+    return redirect('http://localhost:5000/admin/map')
