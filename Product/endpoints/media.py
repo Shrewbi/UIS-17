@@ -1,7 +1,20 @@
 from flask import *
 from helpers import *
+import os
 
 bp = Blueprint('media', __name__)
+
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'media')
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4', 'avi', 'mpeg'])
+ALLOWED_EXTENSIONS_IMG = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS_VID = set(['mov', 'mp4', 'avi', 'mpeg'])
+
+def file_extension(filename):
+    return filename.rsplit('.', 1)[1].lower()
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @bp.route("/api/media", methods=['GET'])
 def get_media():
@@ -21,14 +34,15 @@ def create_media():
     if mtype != "text":
         return abort(400)
 
-    # Insert into db
-    query = "insert into media(type, value) values('{}', '{}') returning id, type, value"
-    query = query.format(mtype, value)
-    cursor = database.execute(query)
+    if mtype == "text":
+        # Insert into db
+        query = "insert into media(type, value) values('{}', '{}') returning id, type, value"
+        query = query.format(mtype, value)
+        cursor = database.execute(query)
 
-    # Prepare response
-    row = cursor.fetchone()
-    return jsonify(data={"id" : row[0], "type" : row[1], "value" : row[2]})
+        # Prepare response
+        row = cursor.fetchone()
+        return jsonify(data={"id" : row[0], "type" : row[1], "value" : row[2]})
 
 @bp.route("/api/media/<int:media_id>", methods=['DELETE'])
 def delete_media(media_id):
@@ -37,15 +51,6 @@ def delete_media(media_id):
     return jsonify(data=None)
 
 
-
-
-
-UPLOAD_FOLDER = '/folder/'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4', 'avi', 'mpeg'])
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @bp.route("/api/uploadfile", methods=['GET', 'POST'])
 def upload_file():
@@ -61,10 +66,28 @@ def upload_file():
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            fileext = file_extension(file.filename)
+            if fileext in ALLOWED_EXTENSIONS_IMG:
+                media_type = "image"
+            elif fileext in ALLOWED_EXTENSIONS_VID:
+                media_type = "video"
+            query = "insert into media(type, value) values('{}', 'NULL') returning id, type, value"
+            query = query.format(media_type)
+            cursor = database.execute(query)
+            row = cursor.fetchone()
+            givenid = row[0]
+            filename = str(givenid) + '.' + str(fileext)
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+
+            query = "update media set value = '{}' where id = '{}' returning id, type, value"
+            query = query.format(filename, givenid)
+            cursor = database.execute(query)
+            row = cursor.fetchone()
+            return jsonify(data={"id" : row[0], "type" : row[1], "value" : row[2]})
+            '''
             return redirect(url_for('uploaded_file',
-                                    filename=filename))
+                                    filename=filename))'''
+                                    
     return '''
     <!doctype html>
     <title>Upload new File</title>
