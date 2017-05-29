@@ -58,17 +58,18 @@ def delete_media(media_id):
     database.execute(query)
     return jsonify(data=None)
 
-
-
-@bp.route("/api/uploadfile", methods=['GET', 'POST'])
+@bp.route("/api/upload_file", methods=['POST'])
 def upload_file():
+    # request.files["filedata"].save(f)
+
     make_sure_path_exists(UPLOAD_FOLDER)
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
+            return abort(400)
+
+        file = request.files['filedata']
         # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
@@ -92,7 +93,6 @@ def upload_file():
             query = query.format(filename, givenid)
             cursor = database.execute(query)
             row = cursor.fetchone()
-            return redirect('http://localhost:5000/admin/map')
-            
-                                    
-    return redirect('http://localhost:5000/admin/map')
+            return jsonify(data={"media": { "id": row[0] }})
+
+    return abort(400)

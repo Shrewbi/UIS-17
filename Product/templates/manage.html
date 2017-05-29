@@ -20,7 +20,7 @@ function cancelCreate() {
 
   // Remove item editor
   $('#item-editor').hide();
-  
+
   // remove template form
   $('#template-form').hide();
   $('#new-temp').removeClass("disabled");
@@ -279,13 +279,12 @@ function UploadVideo(onclick){
 
   <div class="col-md-3">
 
-      <div class="btn-group" style="width:100%">
-         <center><button type="button" class="btn btn-default btn-lg"  id="new-temp" onclick="newTemplate()">
-          New template
-        </button></center>
+    <div class="btn-group" style="width:100%">
+      <button type="button" class="btn btn-default btn-lg" id="new-temp" onclick="newTemplate()" style="margin: 0 auto;">
+        New template
+      </button>
 
-        
-        <div id="template-form">
+      <div id="template-form">
         <form action="localhost:5000/api/templates" method="POST" enctype = "multipart/form-data">
           <div class="input-group" id="temp-name" style="margin-top:10px;">
             <span class="input-group-addon">Name</span>
@@ -298,12 +297,8 @@ function UploadVideo(onclick){
             </div>
             <div id="tempsuccess"><p>successfully added template!</p></div>
           </center>
-          </form>
-          </div>
-
-        
-
-
+        </form>
+      </div>
     </div>
 
     <div id="item-editor">
@@ -336,17 +331,46 @@ function UploadVideo(onclick){
           </tbody>
         </table>
 
-        <form action = "http://localhost:5000/api/uploadfile" method = "POST" 
-         enctype = "multipart/form-data">
+
+<script type="text/javascript">
+
+$(function (){
+  var $mediaForm = $("#media-form");
+  $mediaForm.on("submit", function(event) {
+    event.preventDefault();
+
+    var fileInput = document.getElementById('field-file-input');
+
+    var files = fileInput.files;
+    var formData = new FormData();
+
+    $.each(files, function(i, file) {
+      formData.append("filedata", file, file.name);
+    });
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload_file", true);
+    xhr.onload = function(result) {
+      // Upload done
+      console.log(result);
+    };
+
+    xhr.send(formData);
+  });
+});
+
+</script>
+
+        <form id="media-form">
           <div class="input-group" id="field-name">
             <span class="input-group-addon">Name</span>
             <input type="text" class="form-control" placeholder="Field name" aria-describedby="item-name">
           </div>
 
           <div class="input-group" id="field-radio">
-            Choose media to upload: 
-            <input type="radio" onclick="UploadText()" id="uploadtext" name="media" value="Text"> Text 
-            <input type="radio" onclick="UploadImage()" id="uploadimage" name="media" value="Image"> Image 
+            Choose media to upload:
+            <input type="radio" onclick="UploadText()" id="uploadtext" name="media" value="Text"> Text
+            <input type="radio" onclick="UploadImage()" id="uploadimage" name="media" value="Image"> Image
             <input type="radio" onclick="UploadVideo()" id="uploadvideo" name="media" value="Video"> Video
           </div>
 
@@ -357,7 +381,7 @@ function UploadVideo(onclick){
 
           <div class="input-group" id="field-file">
             <span class="input-group-addon">File</span>
-            <input type="file" name="file" class="form-control" placeholder="Field file" aria-describedby="item-text">
+            <input type="file" name="file" class="form-control" id="field-file-input" placeholder="Field file" aria-describedby="item-text">
           </div>
 
 
