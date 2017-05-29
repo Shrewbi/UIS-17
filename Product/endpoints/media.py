@@ -98,7 +98,7 @@ def upload_file():
 def upload_map():
     # check if the post request has the file part
     #if 'filedata' not in request.files:
-    if 'file' not in request.files:
+    if 'file' not in request.files: # To be compatible with standard HTTPRequests
         print("Map upload failed, no filedata in POST request.")
         return abort(400)
     #file = request.files['filedata']
@@ -113,6 +113,6 @@ def upload_map():
             return abort(400)
         file.save(os.path.join(STATIC_FOLDER, "map.png"))
         #return jsonify(data=None)
-        return redirect("..")
+        return redirect("..") # To be compatible with standard HTTPRequests
 
     return abort(400)
