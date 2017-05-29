@@ -60,39 +60,38 @@ def delete_media(media_id):
 
 @bp.route("/api/upload_file", methods=['POST'])
 def upload_file():
-    # request.files["filedata"].save(f)
-
     make_sure_path_exists(UPLOAD_FOLDER)
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return abort(400)
+    # check if the post request has the file part
+    if 'filedata' not in request.files:
+        print("Failed first check")
+        flash('No file part')
+        return abort(400)
+    file = request.files['filedata']
+    print("File:")
+    print(file)
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        fileext = file_extension(file.filename)
+        if fileext in ALLOWED_EXTENSIONS_IMG:
+            media_type = "image"
+        elif fileext in ALLOWED_EXTENSIONS_VID:
+            media_type = "video"
+        query = "insert into media(type, value) values('{}', 'NULL') returning id, type, value"
+        query = query.format(media_type)
+        cursor = database.execute(query)
+        row = cursor.fetchone()
+        givenid = row[0]
+        filename = str(givenid) + '.' + str(fileext)
+        file.save(os.path.join(UPLOAD_FOLDER, filename))
 
-        file = request.files['filedata']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            fileext = file_extension(file.filename)
-            if fileext in ALLOWED_EXTENSIONS_IMG:
-                media_type = "image"
-            elif fileext in ALLOWED_EXTENSIONS_VID:
-                media_type = "video"
-            query = "insert into media(type, value) values('{}', 'NULL') returning id, type, value"
-            query = query.format(media_type)
-            cursor = database.execute(query)
-            row = cursor.fetchone()
-            givenid = row[0]
-            filename = str(givenid) + '.' + str(fileext)
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
-
-            query = "update media set value = '{}' where id = '{}' returning id, type, value"
-            query = query.format(filename, givenid)
-            cursor = database.execute(query)
-            row = cursor.fetchone()
-            return jsonify(data={"media": { "id": row[0] }})
+        query = "update media set value = '{}' where id = '{}' returning id, type, value"
+        query = query.format(filename, givenid)
+        cursor = database.execute(query)
+        row = cursor.fetchone()
+        return jsonify(data={"media": { "id": row[0] }})
 
     return abort(400)
