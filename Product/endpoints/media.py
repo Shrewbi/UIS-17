@@ -106,11 +106,10 @@ def upload_map():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         fileext = file_extension(file.filename)
-        if fileext not in ALLOWED_EXTENSIONS_IMG:
-            print("Map must be an image.")
+        if fileext != 'png':
+            print("Map must be a .png format image.")
             return abort(400)
-        filename = "map" + '.' + str(fileext)
-        file.save(os.path.join(STATIC_FOLDER, filename))
+        file.save(os.path.join(STATIC_FOLDER, "map.png"))
         return jsonify(data=None)
 
     return abort(400)
