@@ -36,7 +36,7 @@ def create_tables():
         CREATE TABLE item_fields(
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
-          item_id INT REFERENCES items(id),
+          item_id INT REFERENCES items(id) ON DELETE CASCADE,
           media_id INT REFERENCES media(id) ON DELETE CASCADE
         );
 
@@ -44,13 +44,6 @@ def create_tables():
           from_item_id INT REFERENCES items(id) ON DELETE CASCADE,
           to_item_id INT REFERENCES items(id) ON DELETE CASCADE
         );
-    """)
-
-def insert_testdata():
-    database.execute("""
-        insert into test(body) values ('Hello World');
-        insert into test(body) values ('Foo');
-        insert into test(body) values ('Bar');
     """)
 
 def wipe():
@@ -68,4 +61,3 @@ def wipe():
 # First time, run:
 wipe()
 create_tables()
-insert_testdata()

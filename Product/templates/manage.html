@@ -6,6 +6,7 @@ $(function() {
   cancelCreate();
   initMap("map");
   onMapClick(clickMap);
+  setupMediaUpload();
   reloadItems(null);
 });
 
@@ -24,6 +25,7 @@ function cancelCreate() {
   // remove template form
   $('#template-form').hide();
   $('#new-temp').removeClass("disabled");
+
   // uncheck radio boxes
   document.getElementById('uploadtext').checked = false;
   document.getElementById('uploadimage').checked = false;
@@ -93,13 +95,23 @@ function showItemEditor(item) {
   $('#field-file').hide();
   $('#field-text').hide();
   $('#add-field').hide();
-  $('#filesub').hide();
-  $('#field-add').hide();
   $ed = $('#item-editor');
   $ed.show();
   $ed.find('#template-button').text(item.template.name).addClass("disabled");
   $ed.find('#editonly').show();
   $ed.find('h3').text("Editing item");
+
+  $('#delete-item').click(function() {
+    $.ajax({
+      url: '/api/items/' + item.id,
+      type: 'DELETE',
+      contentType: 'application/json',
+      success: function(result) {
+        cancelCreate();
+        reloadItems(null);
+      }
+    });
+  });
 
   $table = $('#admins-table');
   $table.hide();
@@ -136,6 +148,7 @@ function showItemEditor(item) {
     $nameField = $('#field-name input');
     $fileField = $('#field-file input');
     $textField = $('#field-text input');
+    $uploadField = $('#field-file-input');
 
     // UPDATE THIS TO SUPPORT MEDIA
     if ($nameField.val() == "") {
@@ -143,52 +156,98 @@ function showItemEditor(item) {
       return;
     }
 
+    // Second callback
+    var createField = function(mediaId) {
+      $.ajax({
+        url: '/api/items/' + item.id + '/fields',
+        type: 'POST',
+        data: JSON.stringify({
+          name: $nameField.val(),
+          media_id: mediaId
+        }),
+        contentType: 'application/json',
+        success: function(result) {
+          // Add field to table
+          addField(result["data"]);
+
+          // Clear input
+          $nameField.val("");
+          $textField.val("");
+          $uploadField.val("");
+        }
+      });
+    }
+
     // First, create media
 
-    if($ftype == "text"){
-    $.ajax({
-      url: '/api/media',
-      type: 'POST',
-      data: JSON.stringify({
-        type: "text",
-        value: $textField.val()
-      }),
-      contentType: 'application/json',
-      success: function(result) {
-        // Get ID of new media
-        var mediaId = result["data"].id;
+    if ($ftype == "text") {
+      $.ajax({
+        url: '/api/media',
+        type: 'POST',
+        data: JSON.stringify({
+          type: "text",
+          value: $textField.val()
+        }),
+        contentType: 'application/json',
+        success: function(result) {
+          // Get ID of new media
+          var mediaId = result["data"].id;
+          // Now create field
+          createField(mediaId);
+        }
+      });
+    } else {
+      var $mediaForm = $("#media-form");
+      var fileInput = document.getElementById('field-file-input');
 
-        // Now create field
-        $.ajax({
-          url: '/api/items/' + item.id + '/fields',
-          type: 'POST',
-          data: JSON.stringify({
-            name: $nameField.val(),
-            media_id: mediaId
-          }),
-          contentType: 'application/json',
-          success: function(result) {
-            // Add field to table
-            addField(result["data"]);
+      var files = fileInput.files;
+      var formData = new FormData();
 
-            // Clear input
-            $nameField.val("");
-            $textField.val("");
-          }
-        });
-      }
+      $.each(files, function(i, file) {
+        formData.append("filedata", file, file.name);
+      });
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/upload_file", true);
+      xhr.onload = function(result) {
+        var response = JSON.parse(result.target.responseText);
+        mediaId = response["data"]["media"]["id"];
+        createField(mediaId);
+      };
+
+      xhr.send(formData);
+    }
+  });
+}
+
+function setupMediaUpload() {
+  var $mediaForm = $("#media-form");
+  $mediaForm.on("submit", function(event) {
+    event.preventDefault();
+
+    var fileInput = document.getElementById('field-file-input');
+
+    var files = fileInput.files;
+    var formData = new FormData();
+
+    $.each(files, function(i, file) {
+      formData.append("filedata", file, file.name);
     });
-  }});
 
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload_file", true);
+    xhr.onload = function(result) {
+      // Upload done
+      console.log(result.target.responseText);
+    };
+
+    xhr.send(formData);
+  });
 }
 
 
-
-
-
-
 function updateTemplateOptions(onclick) {
-  $but = $('#template-button').removeClass("disabled").text("Select template");
+  $but = $('#template-button').removeClass("disabled").html('Select <span class="caret"></span>');
 
   $ul = $('#template-options');
   $ul.html("");
@@ -241,7 +300,6 @@ function UploadText(onclick){
   $ftype = "text";
   $('#field-file').hide();
   $('#field-text').show();
-  $('#filesub').hide();
   $('#field-add').show();
 
 }
@@ -249,18 +307,12 @@ function UploadImage(onclick){
   $ftype = "image";
   $('#field-text').hide();
   $('#field-file').show();
-  $('#filesub').show();
-  $('#field-add').hide();
 }
 function UploadVideo(onclick){
   $ftype = "video";
   $('#field-text').hide();
   $('#field-file').show();
-  $('#filesub').show();
-  $('#field-add').hide();
 }
-
-
 
 </script>
 
@@ -305,62 +357,39 @@ function UploadVideo(onclick){
 
       <h3>Create item</h3>
 
-      <div class="btn-group">
-        <button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="template-button">
-          Select template
-          <span class="caret"></span>
-        </button>
-        <ul id="template-options" class="dropdown-menu" aria-labelledby="template-button">
-          <li><a href="#">Action</a></li>
-          <li><a href="#">Another action</a></li>
-        </ul>
-      </div>
+      <div class="input-group">
+        <span class="input-group-addon">Template</span>
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="template-button" style="width: 100%;">
+            Select
+            <span class="caret"></span>
+          </button>
+          <ul id="template-options" class="dropdown-menu dropdown-menu-right" aria-labelledby="template-button">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+          </ul>
+        </div>
+      </div><!-- /input-group -->
+
 
       <div id="editonly" style="margin-top: 15px;">
-        <h4>Fields</h4>
-        <table class="table" id="admins-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Value</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+        <div id="admins-table">
+          <h4>Fields</h4>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Value</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
 
-
-<script type="text/javascript">
-
-$(function (){
-  var $mediaForm = $("#media-form");
-  $mediaForm.on("submit", function(event) {
-    event.preventDefault();
-
-    var fileInput = document.getElementById('field-file-input');
-
-    var files = fileInput.files;
-    var formData = new FormData();
-
-    $.each(files, function(i, file) {
-      formData.append("filedata", file, file.name);
-    });
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload_file", true);
-    xhr.onload = function(result) {
-      // Upload done
-      console.log(result);
-    };
-
-    xhr.send(formData);
-  });
-});
-
-</script>
-
+        <h4>Add field</h4>
         <form id="media-form">
           <div class="input-group" id="field-name">
             <span class="input-group-addon">Name</span>
@@ -369,6 +398,7 @@ $(function (){
 
           <div class="input-group" id="field-radio">
             Choose media to upload:
+            <br />
             <input type="radio" onclick="UploadText()" id="uploadtext" name="media" value="Text"> Text
             <input type="radio" onclick="UploadImage()" id="uploadimage" name="media" value="Image"> Image
             <input type="radio" onclick="UploadVideo()" id="uploadvideo" name="media" value="Video"> Video
@@ -384,15 +414,15 @@ $(function (){
             <input type="file" name="file" class="form-control" id="field-file-input" placeholder="Field file" aria-describedby="item-text">
           </div>
 
-
-
           <div class="input-group">
             <button type="button" id="field-add" class="btn btn-default">Add field</button>
-            <button type="submit" id="filesub" class="btn btn-default">Add field</button>
           </div>
         </form>
 
-
+        <h4>Delete item <span class="glyphicon glyphicon-exclamation-sign"></span></h4>
+        <div class="input-group">
+          <button type="button" id="delete-item" class="btn btn-danger">Delete this item</button>
+        </div>
 
       </div>
 
