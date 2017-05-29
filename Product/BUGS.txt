@@ -7,6 +7,6 @@ FEATURES:
 
 1. Slet items (punktet på kortet)
 2. Edit fields (ændr navn, value)
-3. Upload custom kort
+
 4. Vis billede og video på fields og på front-end map
 5. Paths (har vi nok ikke tid til)
