@@ -8,6 +8,7 @@ $(function() {
   onMapClick(clickMap);
   setupMediaUpload();
   reloadItems(null);
+  setupTemplateEditor();
 });
 
 function reloadItems(callback) {
@@ -21,10 +22,6 @@ function cancelCreate() {
 
   // Remove item editor
   $('#item-editor').hide();
-
-  // remove template form
-  $('#template-form').hide();
-  $('#new-temp').removeClass("disabled");
 
   // uncheck radio boxes
   document.getElementById('uploadtext').checked = false;
@@ -56,6 +53,7 @@ function clickMap(xCoord, yCoord) {
     .attr('y', mapState.scale.y(yCoord));
 
   // Show item editor with selection set
+  latestCoords = {x: xCoord, y: yCoord};
   showCreateItemEditor(xCoord, yCoord);
 }
 
@@ -220,6 +218,64 @@ function showItemEditor(item) {
   });
 }
 
+function setupTemplateEditor() {
+
+  var $tableDiv = $('#templates-table');
+  var $tbody = $tableDiv.find('tbody');
+  var $templateForm = $('#template-form');
+
+  $tableDiv.hide();
+
+  var addTemplateToTable = function(template) {
+    $tableDiv.show();
+    var $tr = $("<tr>");
+    $a = $("<a>Delete</a>").on("click", function() {
+      $.ajax({
+        url: '/api/templates/' + template.id,
+        type: 'DELETE',
+        contentType: 'application/json',
+        success: function(result) {
+          $tr.remove();
+        }
+      });
+    });
+    $tr.append($("<td>").text(template.name))
+       .append($("<td>").append($a));
+    $tbody.append($tr);
+  };
+
+  $.ajax({
+    url: '/api/templates',
+    type: 'GET',
+    contentType: 'application/json',
+    success: function(result) {
+      $.each(result["data"], function(i, template) {
+        addTemplateToTable(template);
+      })
+    }
+  });
+
+  $templateForm.find('button').click(function () {
+    $nameField = $templateForm.find("input");
+    if ($nameField.val() == "") {
+      alert("Fill out the template input field!");
+      return;
+    }
+
+    $.ajax({
+      url: '/api/templates',
+      type: 'POST',
+      data: JSON.stringify({ name: $nameField.val() }),
+      contentType: 'application/json',
+      success: function(result) {
+        $nameField.val("");
+        addTemplateToTable(result["data"]);
+        showCreateItemEditor(latestCoords.x, latestCoords.y);
+      }
+    });
+  });
+}
+
 function setupMediaUpload() {
   var $mediaForm = $("#media-form");
   $mediaForm.on("submit", function(event) {
@@ -245,7 +301,6 @@ function setupMediaUpload() {
   });
 }
 
-
 function updateTemplateOptions(onclick) {
   $but = $('#template-button').removeClass("disabled").html('Select <span class="caret"></span>');
 
@@ -262,39 +317,6 @@ function updateTemplateOptions(onclick) {
   });
 }
 
-function newTemplate(onclick){
-  $('#tempsuccess').hide();
-  $('#template-form').show();
-  $('.temporary-item').remove();
-  // Remove item editor
-  $('#item-editor').hide();
-
-  $but = $('#new-temp').addClass("disabled").text("New template");
-
-
-  $('#template-form button').unbind('click').click(function() {
-    // Get input field
-    $nameField = $('#temp-name input');
-    if ($nameField.val() == "") {
-      alert("Fill out the template input field!");
-      return;
-    }
-
-    $.ajax({
-      url: '/api/templates',
-      type: 'POST',
-      data: JSON.stringify({
-        name: $nameField.val()
-      }),
-      contentType: 'application/json',
-      success: function(result) {
-        $('#tempsuccess').show();
-        $nameField.val("");
-      }
-
-    });
-});
-}
 
 function UploadText(onclick){
   $ftype = "text";
@@ -331,25 +353,51 @@ function UploadVideo(onclick){
 
   <div class="col-md-3">
 
-    <div class="btn-group" style="width:100%">
-      <button type="button" class="btn btn-default btn-lg" id="new-temp" onclick="newTemplate()" style="margin: 0 auto;">
-        New template
-      </button>
-
-      <div id="template-form">
-        <form action="localhost:5000/api/templates" method="POST" enctype = "multipart/form-data">
-          <div class="input-group" id="temp-name" style="margin-top:10px;">
-            <span class="input-group-addon">Name</span>
-            <input type="text" class="form-control" placeholder="Template name" >
+    <!-- Modal -->
+    <div class="modal fade" id="templates-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Add/edit item templates</h4>
           </div>
+          <div class="modal-body">
 
-          <center>
-            <div class="input-group">
-              <button type="button" class="btn btn-default">Add template</button>
+            <div id="templates-table">
+              <h4>Templates</h4>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Template name</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
             </div>
-            <div id="tempsuccess"><p>successfully added template!</p></div>
-          </center>
-        </form>
+
+            <h4>Add template</h4>
+            <div class="btn-group" style="width:100%">
+              <div id="template-form">
+                <form>
+                  <div class="input-group" id="temp-name" style="margin-top:10px;">
+                    <span class="input-group-addon">Name</span>
+                    <input type="text" class="form-control" placeholder="Template name">
+                  </div>
+
+                    <div class="input-group">
+                      <button type="button" class="btn btn-default" id="add-template-btn">Add template</button>
+                    </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -370,7 +418,9 @@ function UploadVideo(onclick){
           </ul>
         </div>
       </div><!-- /input-group -->
-
+      <div style="margin-top: 5px;">
+        <a data-toggle="modal" data-target="#templates-modal">Add/edit templates</a>
+      </div>
 
       <div id="editonly" style="margin-top: 15px;">
         <div id="admins-table">
