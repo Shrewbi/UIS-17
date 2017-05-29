@@ -5,7 +5,7 @@ import errno
 
 bp = Blueprint('media', __name__)
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'media')
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static/media')
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4', 'avi', 'mpeg'])
 ALLOWED_EXTENSIONS_IMG = set(['png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_EXTENSIONS_VID = set(['mov', 'mp4', 'avi', 'mpeg'])
