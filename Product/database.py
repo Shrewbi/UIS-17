@@ -6,6 +6,7 @@ import psycopg2
         create user uis with password 'uis';
         grant all privileges on database uis to uis;
         grant all privileges on all tables in schema public to uis;
+        GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public to uis;
 """
 
 connection = psycopg2.connect(
