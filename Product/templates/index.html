@@ -14,12 +14,24 @@ function enterItem(d) {
 
   for (i in d.fields) {
     info.append("h3").text(d.fields[i].name);
-    info.append("p").text(d.fields[i].value);
+
+    if(d.fields[i].type == "image"){
+      info.append('img')
+        .attr('src', '/static/media/' + d.fields[i].value)
+        .attr('width', '100%');
+    }
+
+    else if(d.fields[i].type == "video"){
+      // Fill this out for video
+    }
+
+    else{
+      info.append("p").text(d.fields[i].value);
+    }
   }
 }
 
-function clickItem(d) {
-
+function clickItem(d) { 
 }
 
 function leaveItem(d) {
