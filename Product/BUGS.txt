@@ -5,7 +5,7 @@ BUGS
 
 FEATURES:
 
-1. Slet items (punktet på kortet)
+
 2. Edit fields (ændr navn, value)
 
 4. Vis billede og video på fields og på front-end map
