@@ -6,6 +6,7 @@ import errno
 bp = Blueprint('media', __name__)
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static/media')
+STATIC_FOLDER = os.path.join(os.getcwd(), 'static')
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4', 'avi', 'mpeg'])
 ALLOWED_EXTENSIONS_IMG = set(['png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_EXTENSIONS_VID = set(['mov', 'mp4', 'avi', 'mpeg'])
@@ -63,13 +64,10 @@ def upload_file():
     make_sure_path_exists(UPLOAD_FOLDER)
     # check if the post request has the file part
     if 'filedata' not in request.files:
-        print("Failed first check")
-        flash('No file part')
+        print("File upload failed, no filedata in POST request.")
         return abort(400)
     file = request.files['filedata']
-    print("File:")
-    print(file)
-    # if user does not select file, browser also
+    # if user does not select file, browser also // ? - Mikkel
     # submit a empty part without filename
     if file.filename == '':
         flash('No selected file')
@@ -93,5 +91,26 @@ def upload_file():
         cursor = database.execute(query)
         row = cursor.fetchone()
         return jsonify(data={"media": { "id": row[0] }})
+
+    return abort(400)
+
+@bp.route("/api/upload_map", methods=['POST'])
+def upload_map():
+    # check if the post request has the file part
+    if 'filedata' not in request.files:
+        print("Map upload failed, no filedata in POST request.")
+        return abort(400)
+    file = request.files['filedata']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        fileext = file_extension(file.filename)
+        if fileext not in ALLOWED_EXTENSIONS_IMG:
+            print("Map must be an image.")
+            return abort(400)
+        filename = "map" + '.' + str(fileext)
+        file.save(os.path.join(STATIC_FOLDER, filename))
+        return jsonify(data=None)
 
     return abort(400)
