@@ -65,6 +65,14 @@ def add_constraints_and_triggers():
         FOR EACH ROW EXECUTE PROCEDURE check_media_type();
     """)
 
+def add_an_admin():
+    """ Creates initial admin with login 'admin', password 'god' """
+    database.execute("""
+        INSERT INTO admins(username, password_hash)
+        VALUES ('admin', 'a4757d7419ff3b48e92e90596f0e7548')
+    """)
+
+
 def wipe():
     database.execute("""
         DROP TABLE IF EXISTS test;
@@ -81,3 +89,4 @@ def wipe():
 wipe()
 create_tables()
 add_constraints_and_triggers()
+add_an_admin()
