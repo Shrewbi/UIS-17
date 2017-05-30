@@ -1,0 +1,18 @@
+End user:
+1 - It's obvious it's the three red dots. The video feature is "not very stable". If there had been more than three dots, the participant would want a way to search. Looked at top of screen for it but was surprised it was not there.
+2 - Managed to read out the text on the buggy video entry. The other two were trivial.
+3 - Unable to view the video on account of not being allowed to move cursor off the point. Tried to press space and enter to make the selection "stick".
+
+CMS:
+1 - Login as administrator with given credentials: Did not believe that username was case sensitive. No other issues.
+2 - Upload new map: Easily identified the "upload new map button". Submit could be renamed to "upload". Comment on the fact that all files are shown as available for upload, should ideally be forced to only show .png files. Redirect to "bad request" when attempting to upload wrong filetype. Pressed back to go back to main page, and was met with original map. Thought that it had not submitted properly and uploaded the map again. Was logged out of administration panel after uploading, requiring the user to reenter credentials.
+3 - Create new template: Found new template button easily. No issues.
+4 - Create a point on the map using the template. "Where do I find the templates?" Not obvious that you must click the map in order to show them. Not obvious to the user that you must upload a file in order to create a "field". Issues with multiple clicks, little feedback is given that the field was succesfully created. "If you want to delete more field put checkboxes so you can select multiple". Delete item button does not work. Image is not visible after upload. Clicking delete item crashed server, so no templates are visible. The point did not appear to have been deleted. It appears to have been a get-template query.
+5 - Create 2 new templates: Succesfully added, feedback is given.
+6 - Create 2 points with text and an image sharing 1 template: It does not appear to change anything to use the same template. Templates do not appear to share fields. It is not possible to change to another template while editing an item, only when creating a new item.
+7 - Creating a point with video: No issues.
+8 - Creating an administrator account: No issues, very straightforward. Commented that it should maybe warn that password is too short.
+9 - Delete an item: Server crashes when attempting to delete an item. Also tried to delete fields instead of the item.
+10 - Log out and inspect map: Log out no problem, mouse-overing the points things work, except for videos.
+
+Extra: It does not appear to be possible to remove templates.

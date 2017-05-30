@@ -22,8 +22,18 @@ function enterItem(d) {
     }
 
     else if(d.fields[i].type == "video"){
-      // Fill this out for video
+      info.append("iframe")
+      .attr("x", 100)
+      .attr("y", 50)
+      .attr("height", "315px")
+      .attr("width", "560px")
+      .attr("src", '/static/media/' + d.fields[i].value)
+      .attr("frameborder","0");
     }
+
+    //  info.append('video')
+    //    .attr('width', '100%')
+    //    .attr('src', '/static/media' + d.fields[i].value);
 
     else{
       info.append("p").text(d.fields[i].value);
