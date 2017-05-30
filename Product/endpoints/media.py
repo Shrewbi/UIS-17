@@ -9,7 +9,7 @@ UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static/media')
 STATIC_FOLDER = os.path.join(os.getcwd(), 'static')
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mov', 'mp4', 'avi', 'mpeg'])
 ALLOWED_EXTENSIONS_IMG = set(['png', 'jpg', 'jpeg', 'gif'])
-ALLOWED_EXTENSIONS_VID = set(['mov', 'mp4', 'avi', 'mpeg'])
+ALLOWED_EXTENSIONS_VID = set(['mov', 'mp4'])
 
 def make_sure_path_exists(path):
     try:
