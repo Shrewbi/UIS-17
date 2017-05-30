@@ -1,0 +1,23 @@
+Interview questions:
+
+Front end:
+- Setup: The map will be displayed in full screen mode, 3 points with data fields are present,
+         one with only text, one with text and an image, and one with text, image and video.
+- Tasks:
+-- 1: The user is asked to identify the location of DIKU, Cafeen? and HCØ on the map.
+-- 2: The user is asked to read out the text of the three locations.
+-- 3: The user is asked to view the video attached to Cafeen?
+
+Back end:
+- Setup: The front-end of the map will be displayed to the test participant.
+- Tasks:
+-- 1: The user is asked to login as an administrator, with given credentials.
+-- 2: The user is asked to change the map image file to something else, then back to the initial map.
+-- 3: The user is asked to create a new template.
+-- 4: The user is asked to create a point with text and an image using the template.
+-- 5: The user is asked to create 2 more templates.
+-- 6: The user is asked to create 2 points with text and image sharing 1 template.
+-- 7: The user is asked to create a final point with the last template, containing text, image, and a video.
+-- 8: The user is asked to add another administrator account.
+-- 9: The user is asked to delete an item.
+-- 10: The user is asked to log out and inspect the map via the front end.

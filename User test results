@@ -9,8 +9,10 @@ CMS:
 3 - Create new template: Found new template button easily. No issues.
 4 - Create a point on the map using the template. "Where do I find the templates?" Not obvious that you must click the map in order to show them. Not obvious to the user that you must upload a file in order to create a "field". Issues with multiple clicks, little feedback is given that the field was succesfully created. "If you want to delete more field put checkboxes so you can select multiple". Delete item button does not work. Image is not visible after upload. Clicking delete item crashed server, so no templates are visible. The point did not appear to have been deleted. It appears to have been a get-template query.
 5 - Create 2 new templates: Succesfully added, feedback is given.
-6 - Create 2 points with text and an image sharing 1 template: 
-7 - 
-8 -
-9 - 
-10 - 
+6 - Create 2 points with text and an image sharing 1 template: It does not appear to change anything to use the same template. Templates do not appear to share fields. It is not possible to change to another template while editing an item, only when creating a new item.
+7 - Creating a point with video: No issues.
+8 - Creating an administrator account: No issues, very straightforward. Commented that it should maybe warn that password is too short.
+9 - Delete an item: Server crashes when attempting to delete an item. Also tried to delete fields instead of the item.
+10 - Log out and inspect map: Log out no problem, mouse-overing the points things work, except for videos.
+
+Extra: It does not appear to be possible to remove templates.
