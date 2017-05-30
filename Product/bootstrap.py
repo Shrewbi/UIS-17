@@ -46,6 +46,25 @@ def create_tables():
         );
     """)
 
+def add_constraints_and_triggers():
+    database.execute("""
+        CREATE OR REPLACE FUNCTION check_media_type()
+        RETURNS TRIGGER AS
+        $$
+        BEGIN
+          NEW.type := lower(NEW.type);
+          IF NEW.type NOT IN ('text', 'image', 'video') THEN
+            RAISE EXCEPTION 'Invalid item type, valid types are: "text", "image", or "video"';
+          END IF;
+          RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+
+        CREATE TRIGGER check_media_type_trigger
+        BEFORE INSERT OR UPDATE ON media
+        FOR EACH ROW EXECUTE PROCEDURE check_media_type();
+    """)
+
 def wipe():
     database.execute("""
         DROP TABLE IF EXISTS test;
@@ -61,3 +80,4 @@ def wipe():
 # First time, run:
 wipe()
 create_tables()
+add_constraints_and_triggers()
