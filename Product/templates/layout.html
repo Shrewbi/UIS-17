@@ -64,7 +64,9 @@
       .form-signin .bg-danger {
         padding: 10px;
       }
-
+      svg {
+        -webkit-filter: drop-shadow( 0px 2px 2px #000 );
+      }
       .permanent-item {
         fill: red;
         width: 15px;
@@ -92,7 +94,7 @@
 
       mapState.size = {
         width: mapState.div.clientWidth,
-        height: mapState.div.clientWidth * 0.75
+        height: mapState.div.clientWidth * 0.6
       };
 
       mapState.map = d3.select('#' + idKey)
@@ -143,6 +145,8 @@
              .attr('data-id', function(d) { return d.id; })
              .attr('x', function(d){ return mapState.scale.x(d.coordinates.x); })
              .attr('y', function(d){ return mapState.scale.y(d.coordinates.y); })
+             .attr('rx', '10px')
+             .attr('ry', '10px')
              .on('mouseenter', onEnter)
              .on('click', onClick)
              .on('mouseleave', onLeave);

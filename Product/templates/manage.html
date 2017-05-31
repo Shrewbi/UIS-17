@@ -50,7 +50,9 @@ function clickMap(xCoord, yCoord) {
     .append('rect')
     .attr('class', 'temporary-item')
     .attr('x', mapState.scale.x(xCoord))
-    .attr('y', mapState.scale.y(yCoord));
+    .attr('y', mapState.scale.y(yCoord))
+    .attr('rx', '10px')
+    .attr('ry', '10px');
 
   // Show item editor with selection set
   latestCoords = {x: xCoord, y: yCoord};
@@ -99,7 +101,7 @@ function showItemEditor(item) {
   $ed.find('#editonly').show();
   $ed.find('h3').text("Editing item");
 
-  $('#delete-item').click(function() {
+  $('#delete-item').unbind('click').click(function() {
     $.ajax({
       url: '/api/items/' + item.id,
       type: 'DELETE',
@@ -255,7 +257,7 @@ function setupTemplateEditor() {
     }
   });
 
-  $templateForm.find('button').click(function () {
+  $templateForm.find('button').unbind('click').click(function () {
     $nameField = $templateForm.find("input");
     if ($nameField.val() == "") {
       alert("Fill out the template input field!");
