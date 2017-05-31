@@ -25,8 +25,7 @@ function cancelCreate() {
 
   // uncheck radio boxes
   document.getElementById('uploadtext').checked = false;
-  document.getElementById('uploadimage').checked = false;
-  document.getElementById('uploadvideo').checked = false;
+  document.getElementById('uploadmedia').checked = false;
 
 }
 
@@ -327,13 +326,8 @@ function UploadText(onclick){
   $('#field-add').show();
 
 }
-function UploadImage(onclick){
-  $ftype = "image";
-  $('#field-text').hide();
-  $('#field-file').show();
-}
-function UploadVideo(onclick){
-  $ftype = "video";
+function UploadMedia(onclick){
+  $ftype = "media";
   $('#field-text').hide();
   $('#field-file').show();
 }
@@ -421,7 +415,7 @@ function UploadVideo(onclick){
         </div>
       </div><!-- /input-group -->
       <div style="margin-top: 5px;">
-        <a data-toggle="modal" data-target="#templates-modal">Add/edit templates</a>
+        <a data-toggle="modal" href="#" data-target="#templates-modal">Add/edit templates</a>
       </div>
 
       <div id="editonly" style="margin-top: 15px;">
@@ -452,8 +446,7 @@ function UploadVideo(onclick){
             Choose media to upload:
             <br />
             <input type="radio" onclick="UploadText()" id="uploadtext" name="media" value="Text"> Text
-            <input type="radio" onclick="UploadImage()" id="uploadimage" name="media" value="Image"> Image
-            <input type="radio" onclick="UploadVideo()" id="uploadvideo" name="media" value="Video"> Video
+            <input type="radio" onclick="UploadMedia()" id="uploadmedia" name="media" value="Media"> Media
           </div>
 
           <div class="input-group" id="field-text">
